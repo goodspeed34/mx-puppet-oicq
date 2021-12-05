@@ -115,11 +115,11 @@ export class App
                 .set('Cookie', cookie);
             let data = JSON.parse(response.text);
             // Verify the output name.
-            if (typeof data.result.buddy.info_list[0].nick === "undefined") {
-                return _("Unknown Nickname");
-            } else {
+	    try {
                 return data.result.buddy.info_list[0].nick;
-            }
+	    } catch {
+		return _("Unknown Nickname");
+	    }
         }
     }
 
@@ -260,7 +260,6 @@ export class App
     public createRoom = async (room: IRemoteRoom) => await this.getbRoomParams(room.puppetId, room.roomId);
     /* Create a new user for bridging. */
     public createUser = async (remoteUser: IRemoteUser) => {
-        console.log(remoteUser);
         if (remoteUser.userId == "control") {
 	    let params = CONTROLLER_PARAMS;
 	    params.puppetId = remoteUser.puppetId;
@@ -338,11 +337,7 @@ export class App
 	let content = "";
 	let sendTextReq = false;
 
-	console.log(params);
-	
         event.message.forEach(async (msg) => {
-	    console.log(msg);
-	    
 	    switch (msg.type) {
 		case "face":
 		    msg.text = `[${msg.text}]`
