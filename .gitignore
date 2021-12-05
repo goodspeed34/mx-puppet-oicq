@@ -1,0 +1,10 @@
+*.db
+*.yaml
+
+*.log
+*.lock
+
+out/
+node_modules/
+
+.deps
