@@ -107,9 +107,6 @@ export class Controller
 		    user: uparams
 		};
 
-
-		console.log(params);
-
 		setTimeout(() => {
 		    this.puppet.sendMessage(params, { body: WELCOME_MESSAGE }).then(() => {
 			this.cfg.bridge.firstInit = false;
