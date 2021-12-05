@@ -21,3 +21,34 @@ This work is published from:
 # mx-puppet-oicq
 
 mx-pupept-oicq 是轻量级的 QQ 到 Matrix 网络的网桥实现。网桥使用 nodejs 开发，使用 mx-puppet-bridge 与 OICQ 作为运行库。
+
+## 食用方法
+
+首先，下载依赖库：
+
+```
+$ git clone https://github.com/goodspeed34/mx-puppet-oicq.git
+
+$ cd mx-puppet-oicq
+
+$ make all
+```
+
+然后简单地配置：
+
+```
+$ make mgen
+```
+
+你会看到一连串互动性问答，回答正确信息即可。
+
+然后，你就可以看到一个 oicq-registration.yaml 文件，将它复制到 synapse 主机上。
+
+修改 Homeserver 的配置文件（通常为 homeserver.yaml），加入下面的内容：
+
+```yaml
+app_service_config_files:
+  - /path/to/oicq-registration.yaml
+```
+
+完成后就可以输入 make run 然后开始使用了！
