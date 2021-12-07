@@ -8,9 +8,10 @@ import { consoleAvatar, CONTROLLER_PARAMS } from "./oicq";
 import { IPuppetData, IReceiveParams, IRemoteRoom, PuppetBridge } from "mx-puppet-bridge";
 import { Client } from "oicq";
 
-const HELP_MESSAGE = [ _("    Welcome to the control room of mx-puppet-oicq!\n"),
+const HELP_MESSAGE = [ _("Welcome to the control room of mx-puppet-oicq!"),
 		       _("    help    display this help"),
-		       _("    status  show the status of the bridge")].join("\n    ");
+		       _("    status  show the status of the bridge"),
+		       _("    show    show some useful details") ].join("\n");
 
 const WELCOME_MESSAGE =  _("    Welcome to the control room of mx-puppet-oicq!\n");
 
@@ -42,9 +43,16 @@ export class Controller
 
     public send(room: IRemoteRoom, text: string)
     {
-	let prefix = `[${this.client.isOnline() ? "Online" : "Offline"}] \n\n`;
-	text = prefix += text;
-	this.puppet.sendStatusMessage(room, text);
+	let uparams = CONTROLLER_PARAMS;
+	uparams.puppetId = room.puppetId;
+	
+	const params: IReceiveParams = {
+	    room,
+	    user: uparams
+	};
+	
+	// text = prefix += text;
+	this.puppet.sendMessage(params, { body: text } );
     }
     
     /* Console Command Handler */
@@ -57,12 +65,33 @@ export class Controller
 		this.send(room, HELP_MESSAGE)
 		break;
 	    case "status":
-		let status = [ "",
-			       _(`OICQ Status: ${this.client.isOnline() ? "Online" : "Offline"} <${this.client.status}>`),
+		let status = [ _(`OICQ Status: ${this.client.isOnline() ? "Online" : "Offline"} <${this.client.status}>`),
 			       _(`OICQ Count: ${this.client.fl.size}, ${this.client.gl.size}, ${this.client.sl.size}`),
 			       _(`OICQ I/O: ${this.client.stat.sent_msg_cnt}, ${this.client.stat.recv_msg_cnt}  ${this.client.stat.sent_pkt_cnt}, ${this.client.stat.recv_pkt_cnt}`)
-		]
-		this.send(room, status.join("\n    "))
+			     ];
+		this.send(room, status.join("\n"));
+		break;
+	    case "show":
+		switch (cmd[1]) {
+		    case "group":
+		    case "groups":
+			let gmsg = [ ];
+			this.client.gl.forEach((g) => {
+			    gmsg.push(_(`:---: ${g.group_name} [${g.group_id}]`));
+			});
+			this.send(room, gmsg.join("\n"));
+			break;
+		    case "friend":
+		    case "friends":
+			let fmsg = [ ];
+			this.client.fl.forEach((f) => {
+			    fmsg.push(_(`:---: ${f.nickname} [${f.user_id}]`));
+			});
+			this.send(room, fmsg.join("\n"));
+			break;		
+		    default:
+			this.send(room, _("Available to list: groups friends"));
+		}
 		break;
 	    default:
 		this.send(room, _("Command not found, enter \"help\" to show commands"))

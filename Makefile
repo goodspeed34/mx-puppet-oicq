@@ -8,8 +8,8 @@ yarn := yarn
 all: ${O}/index.js ${O}/gen.js ${O}/fgen.js
 
 clean:
-	rm .deps
-	rm -rf node_modules
+	# rm -f .deps
+	# rm -rf node_modules
 	rm -f ${O}/*.js
 
 fgen: ${O}/fgen.js
@@ -33,5 +33,5 @@ oicq-registration.yaml: ${O}/index.js config.yaml
 	${npx} tsc --outDir ${O} source/$(basename $(@F)).ts
 
 .deps:
-	${yarn} install
+	${npx} ${yarn} install
 	touch .deps
