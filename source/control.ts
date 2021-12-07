@@ -11,7 +11,8 @@ import { Client } from "oicq";
 const HELP_MESSAGE = [ _("Welcome to the control room of mx-puppet-oicq!"),
 		       _("    help    display this help"),
 		       _("    status  show the status of the bridge"),
-		       _("    show    show some useful details") ].join("\n");
+		       _("    show    show some useful details"),
+		       _("    join    join in a chat") ].join("\n");
 
 const WELCOME_MESSAGE =  _("    Welcome to the control room of mx-puppet-oicq!\n");
 
@@ -90,11 +91,23 @@ export class Controller
 			this.send(room, fmsg.join("\n"));
 			break;		
 		    default:
-			this.send(room, _("Available to list: groups friends"));
+			this.send(room, _("Usage: show <groups|friends>"));
+		}
+		break;
+	    case "join":
+		switch (cmd[1]) {
+		    case "friend":
+			this.send(room, _(`Please join @_OICQ__${cmd[2]}:${this.cfg.bridge.domain}`));
+			break;
+		    case "group":
+			this.send(room, _(`Please join #_OICQ__${cmd[2]}:${this.cfg.bridge.domain}`));
+			break;
+		    default:
+			this.send(room, _("Usage: join <friend|group> <ID>"));
 		}
 		break;
 	    default:
-		this.send(room, _("Command not found, enter \"help\" to show commands"))
+		this.send(room, _("Command not found, enter \"help\" to show commands"));
 	}
     }
 
